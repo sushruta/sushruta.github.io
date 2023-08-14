@@ -1,14 +1,22 @@
 ---
 title: "An OpenGL Skeleton Code with CMake"
-description: 
+description: How to use my template for opengl project
+slug: opengl-cmake-skeleton
 date: 2023-08-14T13:44:37-07:00
 image: 
-math: 
-license: 
-hidden: false
-comments: true
-draft: false
+categories:
+  - Computer Graphics
+  - OpenGL
+  - CMake
+tags:
+  - Computer Graphics
+  - OpenGL
+  - CMake
 ---
+
+### TL;DR Summary
+
+Check out [sushruta/starter-code-opengl](https://github.com/sushruta/starter-code-opengl) repository and use it as a template for your next OpenGL project with code laid out neatly and out of the box support for GLFW, GLM and GLAD.
 
 ### Background
 
