@@ -92,8 +92,10 @@ Elements within a queue are guranteed to be ordered amongst themselves. An eleme
 
 However, elements across queues are not ordered in any way. If A exists in one queue and B in another queue, there is no ordering among those two elements. The only way to enforce an ordering is by using `VkSemaphore`.
 
-### How are Queues chosen
+### Queues and Concurrency
 
 As a developer, I'd have to understand what capabilities I need. Let's say I am going to write a raytracing application. I would need `GRAPHICS` bit for displaying the image through Vulkan. I'll need `TRANSFER` bit for transferring data to GPU. I'll need `COMPUTE` bit for doing the actual raytracing logic in GPU.
 
 As I start the application, I'll ask for queues that support these bits and Vulkan will give you a handle to these queues. It is NOT guranteed that we will get one queue. However, it is definitely possible to ask for one queue. Usually using one queue means everything will happen in order and there is no need to synchronize anything. The downside is that we are throwing away free parallelism that we could probably use by using multiple queues.
+
+Anytime in Vulkan that you do any sort of GPU based rendering, you do that by taking commands in a command buffer and submitting them to a queue. Now this might be a graphics queue for drawing (VK_QUEUE_GRAPHICS_BIT), queue for transferring (VK_QUEUE_TRANSFER_BIT) or for compute shaders (VK_QUEUE_COMPUTE_BIT).
