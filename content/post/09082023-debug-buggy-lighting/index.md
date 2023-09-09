@@ -11,7 +11,7 @@ tags:
   - Vulkan
 ---
 
-### Background
+## Background
 
 I wrote some vulkan code to load a model and render it using Phong Shading. It involved some vulkan code and shaders in glsl. However, lighting wouldn't work. I would get a blank screen when running the code.
 
@@ -77,4 +77,52 @@ void main() {
 
 ![Only Ambient Lighting shows up](01-only-ambient-shows-up.gif)
 
-The result was that only ambient lighting was showing up. This is same as a constant color being added everywhere. Clearly the diffuse component wasnt being added.
+### Remove ambient lighting and check diffuse light
+
+The result was that only ambient lighting was showing up. This is same as a constant color being added everywhere. Clearly the diffuse component wasnt being added. It may mean that the diffuse component is infact always zero. That can mean that diffuse component is infact always negative and it is getting clamped at `0.0` because of the `max` component. Let us investigate that by assigning the diffuse component at the component of light. Also, I will turn off ambient lighting. The resulting fragment shader would like the following
+
+```
+...
+void main() {
+  ...
+
+  outColor = vec4(0.0, 0.0, 0.0, 1.0);
+
+  ...
+
+  float diffuseIntensity = dot(camera_space_normal, camera_space_lightDir);
+  
+  if (diffuseIntensity < 0) {
+    outColor = vec4(-diffuseIntensity, -diffuseIntensity, -diffuseIntensity, 1.0);
+  }
+}
+```
+
+This resulted in nothing being rendered :(
+
+### Check if the dot product is always zero
+
+This resulted in nothing being visible which means `diffuseIntensity` is not negative either. It could mean that `diffuseIntensity` is always zero?!?!?? It could be that the dot product is always zero. This is possible if all normals are always perpendicular to the light dir. This is very very unlikely. The more likely thing happening here could be that either one or both of `camera_space_normal` or `camera_space_lightdir` are always zero.
+
+#### Set outColor as the normal at that point
+
+Let us check `camera_space_normal` first. We will set `outColor` to the absolute values of the normal.
+
+```
+// set outColor to the absolute values of normal to check if they are ever non-zero
+outColor = vec4(abs(camera_space_normal), 1.0);
+```
+
+This resulted in the following resulted in a blank screen again meaning the normal is zero everywhere.
+
+#### Set outColor as the lightDir at that point
+
+Let us also check `camera_space_lightDir` by setting its absolute value as outColor. Both could be zero.
+
+```
+outColor = vec4(abs(camera_space_lightDir), 1.0);
+```
+
+![setting outColor as lightDir](02-camera-space-lightDir-color.gif)
+
+Clearly, lightDir is not zero everywhere meaning lightDir could be correct.
