@@ -13,7 +13,7 @@ tags:
 
 ## Prologue
 
-I wrote some vulkan code to load a model and render it using Phong Shading. It involved some vulkan code and shaders in glsl. However, lighting wouldn't work. I would get a blank screen when running the code.
+I wrote [some vulkan code](https://github.com/sushruta/vulkan-simple-model-loading) to load a model and render it using Phong Shading. It involved some vulkan code and shaders in glsl. However, lighting wouldn't work. I would get a blank screen when running the code.
 
 Here is code for the two shaders
 
@@ -77,7 +77,7 @@ void main() {
 
 ![Only Ambient Lighting shows up](01-only-ambient-shows-up.gif)
 
-### Debugging the Code to Get Correct Lighting
+## Debugging the Code to Get Correct Lighting
 
 ### Remove ambient lighting and check diffuse light
 
@@ -266,6 +266,6 @@ and it yields the following correct result
 
 ![working phong shading result](05-diffuse-specular-lighting.gif)
 
-### Github Link and Full Code
+## Github Link and Full Code
 
 Please look at the [vulkan-simple-model-loading](https://github.com/sushruta/vulkan-simple-model-loading) repository for the code. The code uses cmake and runs on linux. The `CMakeLists.txt` file has been written for linux and it might not work on other platforms. I will come back to fix this soon.
