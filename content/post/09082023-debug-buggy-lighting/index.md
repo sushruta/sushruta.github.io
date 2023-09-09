@@ -197,3 +197,18 @@ The normal is now not `Nan` and looks like the normals may be right. Let me assi
 
 ![normals after fixing the for loop bug](03-normals-after-for-loop.gif)
 
+The normals are now not zero and varying across the surface of the model.
+
+#### Setting the outColor as diffuse component again
+
+```
+...
+...
+// setting outColor as the diffuse component
+outColor = vec4(diffuseIntensity * vec3(diffuseColor), 1.0);
+```
+
+yields the following result
+
+![diffuse component as color for the model](04-diffuse-component-as-color.gif)
+
