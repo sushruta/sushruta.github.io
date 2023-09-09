@@ -1,7 +1,8 @@
+
 ---
-title: "Debugging Buggy Lighting Code"
-description: How to debug broken lighting code in vulkan
-slug: buggy-vulkan-lighting-code
+title: "Debug Buggy Lighting Code"
+description: Figuring out the error in my code to fix lighting
+slug: buggy-lighting-vulka-code
 date: 2023-09-08T18:11:54-07:00
 image: phong.svg
 categories:

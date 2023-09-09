@@ -15,3 +15,6 @@ hasCJKLanguage = false
 
 # Change it to your Disqus shortname before using
 # disqusShortname = "hugo-theme-stack"
+
+# If the number of images in the page are large, the timeout should be bumped up
+timeout = 60000
