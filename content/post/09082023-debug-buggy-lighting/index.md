@@ -199,7 +199,9 @@ The normal is now not `Nan` and looks like the normals may be right. Let me assi
 
 The normals are now not zero and varying across the surface of the model.
 
-#### Setting the outColor as diffuse component again
+### Setting the outColor as diffuse component again
+
+Let us revert some of the changes by setting the outColor as the result of the dot product.
 
 ```
 ...
