@@ -11,7 +11,7 @@ tags:
   - Vulkan
 ---
 
-## Background
+## Prologue
 
 I wrote some vulkan code to load a model and render it using Phong Shading. It involved some vulkan code and shaders in glsl. However, lighting wouldn't work. I would get a blank screen when running the code.
 
@@ -76,6 +76,8 @@ void main() {
 ```
 
 ![Only Ambient Lighting shows up](01-only-ambient-shows-up.gif)
+
+### Debugging the Code to Get Correct Lighting
 
 ### Remove ambient lighting and check diffuse light
 
@@ -214,3 +216,56 @@ yields the following result
 
 ![diffuse component as color for the model](04-diffuse-component-as-color.gif)
 
+Looks like the bug was correctly identified and fixed. The light is giving a matte look to the surface which is facing the light while the rest is visbily darker.
+
+### Adding Specular Lights for full Phong Shading
+
+We also compute eye vectors in camera space, i.e., get a vector that starts from the point of intersection and points towards the camera eye. Note that in the camera space, the eye of the camera is the origin and therefore it amounts to taking the negative of the camera space vertex to get the camera space eye direction.
+
+We use the above eye direction vector to determine the half vector. This vector is vector that is midway between the light dir and the eye dir. Here's the final fragment shader code -
+
+```
+#version 450
+
+layout(location = 0) in vec3 fragNormal;
+layout(location = 1) in vec3 fragPosition;
+
+layout(location = 0) out vec4 outColor;
+
+void main() {
+  // point light
+  vec4 lightPos = vec4(2.0, 4.0, 1.0, 1.0);
+
+  vec4 ambientColor = vec4(0.1, 0.1, 0.1, 1.0);
+  vec4 diffuseColor = vec4(0.58, 0.15, 0.0, 1.0);
+  vec4 specularColor = vec4(1.0, 1.0, 1.0, 1.0);
+
+  float shininess = 47.0;
+
+  outColor = ambientColor;
+
+  vec3 camera_space_normal = normalize(fragNormal);
+  vec3 camera_space_lightDir = normalize(lightPos.xyz - fragPosition);
+
+  float diffuseIntensity = max(dot(camera_space_normal, camera_space_lightDir), 0.0);
+
+  outColor += vec4(diffuseIntensity * vec3(diffuseColor), 1.0);
+
+  // now add the specular component
+  vec3 camera_space_eyeDir = normalize(vec3(0.0, 0.0, 0.0) - fragPosition);
+  vec3 camera_space_half_vector = normalize(camera_space_eyeDir + camera_space_lightDir);
+
+  float specularIntensity = pow(max(dot(camera_space_normal, camera_space_half_vector), 0.0), shininess);
+  outColor += vec4(specularIntensity * vec3(specularColor), 1.0);
+
+  outColor = clamp(outColor, 0, 1);
+}
+```
+
+and it yields the following correct result
+
+![working phong shading result](05-diffuse-specular-lighting.gif)
+
+### Github Link and Full Code
+
+Please look at the [vulkan-simple-model-loading](https://github.com/sushruta/vulkan-simple-model-loading) repository for the code. The code uses cmake and runs on linux. The `CMakeLists.txt` file has been written for linux and it might not work on other platforms. I will come back to fix this soon.
