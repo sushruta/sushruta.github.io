@@ -126,3 +126,74 @@ outColor = vec4(abs(camera_space_lightDir), 1.0);
 ![setting outColor as lightDir](02-camera-space-lightDir-color.gif)
 
 Clearly, lightDir is not zero everywhere meaning lightDir could be correct.
+
+We will have to further inspect why the normal is zero everywhere
+
+### Inspecting the code where we create the normals
+
+I implemented my own obj file reader. Here's the pseudo code describing the code
+
+```
+// read the file
+std::ifstream modelFile(MODEL_PATH.c_str());
+
+// iterate through every line
+while (... every vertex line ...) {
+  // read every vertex and store it
+  // in a vector
+  // also assign the normal for the vertex as zero
+}
+
+while (... every face ...) {
+  // get the three vertices for the face
+  // construct vectors corresponding to it edges
+  // compute cross producct of the two edges
+
+  // for each of the three vertices, increment the
+  // vertex's normal with this cross product
+}
+
+for (every vertex) {
+  // normalize the normal as the final normal
+}
+```
+
+I added some `cout` statements to figure out what the normal value is for each vertex. I need to check if the normal values are zero? On running the code, I get the following result -
+
+```
+normal at vertex: vec3(-nan, -nan, -nan)
+normalized normal: vec3(-nan, -nan, -nan)
+normal at vertex: vec3(-nan, -nan, -nan)
+normalized normal: vec3(-nan, -nan, -nan)
+normal at vertex: vec3(-nan, -nan, -nan)
+normalized normal: vec3(-nan, -nan, -nan)
+normal at vertex: vec3(-nan, -nan, -nan)
+normalized normal: vec3(-nan, -nan, -nan)
+normal at vertex: vec3(-nan, -nan, -nan)
+```
+
+Clearly, the normal is not defined correctly. On going through the code once again, I see the problem.  I realized that the last `for loop` was infact wrapped inside the while loop immediately before it. I introduced this bug and figured I need to change the code. I took the for loop outside the while loop.
+
+On running the code once again, I see the following as output
+
+```
+normalized normal: vec3(-0.261505, -0.941225, -0.213802)
+normal at vertex: vec3(-0.629102, -3.133038, -4.387936)
+normalized normal: vec3(-0.115894, -0.577175, -0.808355)
+normal at vertex: vec3(4.633965, -1.864899, -0.759996)
+normalized normal: vec3(0.917139, -0.369095, -0.150416)
+normal at vertex: vec3(2.219076, -2.608599, -1.035577)
+normalized normal: vec3(0.620214, -0.729083, -0.289435)
+normal at vertex: vec3(-0.174536, -4.010030, -1.413008)
+normalized normal: vec3(-0.041016, -0.942366, -0.332060)
+normal at vertex: vec3(3.572911, -2.980712, -3.348010)
+normalized normal: vec3(0.623292, -0.519983, -0.584058)
+normal at vertex: vec3(-0.380020, -2.730968, -4.283769)
+normalized normal: vec3(-0.074595, -0.536069, -0.840872)
+normal at vertex: vec3(1.051317, -3.298064, -1.129301)
+normalized normal: vec3(0.288734, -0.905781, -0.310151)
+```
+The normal is now not `Nan` and looks like the normals may be right. Let me assign its absolute value as the color in the fragment shader again to see what the result is.
+
+![normals after fixing the for loop bug](03-normals-after-for-loop.gif)
+
