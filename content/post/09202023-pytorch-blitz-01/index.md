@@ -13,12 +13,27 @@ tags:
   - Pytorch
 ---
 
-## Pytorch in a hurry - Part 1
+### Pytorch in a hurry - Part 1
 
 Learning about `numpy` while going through [cs231n's first few notes](https://cs231n.github.io/) was exciting. The best part was figuring out the code that would run in a [vectorized manner](https://www.pythonlikeyoumeanit.com/Module3_IntroducingNumpy/VectorizedOperations.html).
 
+In this code walkthrough, we will attempt to write a simple neural network that trains on GPU. The neural network is extremely simple -
 
-## Appendix
+(a) no regularization - this is bad because the model will be susceptible to overfitting
+(b) no bias vector - this is bad as the layer can no longer capture affine properties
+(c) abusing GPU - this is a really small example and can be done on CPU with ease but we want to demonstrate simple GPU use
+
+But this is just a walkthrough and we will probably be okay inspite of all the above downsides.
+
+### Jupyter Notebook and Annotations
+
+The jupyter notebook can be accessed here.
+
+### Credits
+
+The entire structure has been heavily borrowed from Stanford's cs231n course. The code here is specially borrowed from [Justin Johnson](https://github.com/jcjohnson)'s github repository of [pytorch examples](https://github.com/jcjohnson/pytorch-examples). The course and various repositories and videos on youtube have been extremely helpful in paving the way to understanding these concepts!
+
+### Appendix
 
 #### What is vectorized code?
 
@@ -33,10 +48,10 @@ That is it. It is one of the most popular activation functions in Neural Network
 Since, this is a neural network, we also have to worry about backpropagation. That means, we would like to compute the derivative of `ReLU(x)`.
 
 $$
-\dfrac{dReLU(x)}{x}=
+\dfrac{dReLU(x)}{dx}=
 \begin{cases}
-1.0, & \text{ if } x>0,\\
-0.0, & \text{ if } x<=0
+1.0, & \text{ if } x >= 0 \\
+0.0, & \text{ if } x < 0 \\
 \end{cases}
 $$
 
