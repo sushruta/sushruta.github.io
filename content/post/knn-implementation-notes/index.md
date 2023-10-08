@@ -281,3 +281,39 @@ No loop version took 0.397820 seconds
 I am not sure why One loop code is slower than Two loop code. However, what is expected is that Zero Loop code will be much faster than either of the two. And it is. The vectorized code is close to 30-60x faster than the other two implementations!
 
 We can already see the benefit of this. kNN algorithm's inference time scales with the number of training examples and the faster the distance computation, the better.
+
+### Crossvalidations and Getting the Best Result
+
+We do cross validations to determine the best `k`. Essentially, we define the number of folds. Let us define it as 5. This means that our training dataset will be divided into `5` parts. We choose `4` parts randomly and call it the training data. The 5th part is used as "testing data" to check how well we have done. We do this a number of times to choose different parts to make the training data. We also iterate through different values of `k`.
+
+We essentially keep score of which `k` led to the best results over repeated, random sampling. Based on the data, we choose a `k` and decide that be the `k` from now on and use that for classifying the actual test data.
+
+Here's where the zero loop code truly shines. We are running the distance computation code multiple times to determine the best `k`. Spending `20s` for each time with two loop code would mean our entire search could easily take `600s`. This is a lot of time. Using vectorized code, we are cutting that to `10s`.
+
+After trying different `k` values in `[1, 5, 10, 50, 100]`, we land at an accuracy of `29%`.
+
+### Thoughts on training and validation errors
+
+The assignment asked two interesting questions. How will the training error of `1-NN` compare to training error of `5-NN`?
+
+Training Error on training dataset is nothing but recall. And for `1-NN`, `recall` is 100% since it will point to the label of self. `5-NN` might actually introduce some errors because of majority voting. Therefore, training error for `1-NN` will be lower than `5-NN`.
+
+On the other hand, validation error for `1-NN` will be higher than `5-NN`. `5-NN` has the advantage of generalization through majority voting and that will improve accuracy on the unseen data. Therefore validation error of `1-NN` will be higher than that of `5-NN`.
+
+### Visualization of the Distances
+
+On visualizing the distances matrix, we get the following image -
+
+![banner-image.png]
+
+Clearly there are a few lines that are brighter than others. Brighter lines represent the images that are the most dissimilar (since their distance is the highest).
+
+So, if we see a vertical bright line, we can say that the training image corresponding to that column is dissimilar to all the test cases.
+
+A bright horizontal line means that the test example is dissimilar to most of the training examples.
+
+A bright horizontal line with a dark break in between means that the test image was similar to the training images in that area but dissimilar to the rest.
+
+-----------------
+
+Thanks for reading this post!
