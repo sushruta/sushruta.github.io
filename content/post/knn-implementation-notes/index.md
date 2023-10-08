@@ -304,7 +304,7 @@ On the other hand, validation error for `1-NN` will be higher than `5-NN`. `5-NN
 
 On visualizing the distances matrix, we get the following image -
 
-![banner-image.png]
+![Distance Visualization](banner-image.png)
 
 Clearly there are a few lines that are brighter than others. Brighter lines represent the images that are the most dissimilar (since their distance is the highest).
 
