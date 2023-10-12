@@ -38,10 +38,24 @@ $$
 
 ### Contribution of marginLoss
 
-$marginLoss$ is a scalar. This means its derivative w.r.t to a vector $w_{j}$ would be a vector too. If we were to look at $\mathbf{W}$, the derivative of $marginLoss$ w.r.t to $\mathbf{W}$ would be a matrix too. It will be a matrix where the $m^{th}$ column of the matrix will hold $\mathbf{w_{m}}$
+$marginLoss$ is a scalar. It is defined in terms of $w_{j}$ and $w_{y_{i}}$. Both of these are vectors which means that the derivative of $marginLoss$ will be a vector. The derivative of marginLoss ($mL$) would be as follows -
 
 $$
-\frac{d}{dW}mLoss = \begin{pmatrix} \frac{d}{dw_{1}}mLoss & \frac{d}{dW_{2}}mLoss & ... & \frac{d}{dW_ne}mLoss \end{pmatrix}
+\nabla mL_{i} = \frac{d}{dw_{j}}mL_{i} + \frac{d}{dw_{y_{i}}}mL_{i}
+$$
+
+Expanding out $mL_{i}$, we get
+
+$$
+\nabla mL_{i} =  \frac{d}{dw_{j}} \sum_{j \neq y_{i}}(max(0, f_{j} - f_{y_{i}} + \Delta)) + \frac{d}{dw_{y_{i}}} \sum_{j \neq y_{i}}(max(0, f_{j} - f_{y_{i}} + \Delta))
+$$
+
+Before we go further, let us solve a few smaller details and glue it back in the above expression for the final derivative -
+
+$$
+\frac{d}{dW}mLoss = \begin{pmatrix} \frac{d}{dw_{1}}mLoss & \frac{d}{dw_{2}}mLoss & ... & \frac{d}{dw_{ne}}mLoss \end{pmatrix} + \begin{pmatrix} \frac{d}{dw_{y_{1}}}mLoss & \frac{d}{dw_{y_{2}}}mLoss & ... & \frac{d}{dw_{y_{ne}}}mLoss \end{pmatrix}
+$$
+$$
 \frac{d}{dW} \sum_{j \neq y_{i}} max(0, f_{j} - f_{y_{i}} + \Delta) = \frac{d}{dw_{j}}\sum_{j \neq y_{i}}(max(0, f_{j} - f_{y_{i}} + \Delta)) + \frac{d}{dw_{y_{i}}}\sum_{j \neq y_{i}}(max(0, f_{j} - f_{y_{i}} + \Delta))
 $$
 
