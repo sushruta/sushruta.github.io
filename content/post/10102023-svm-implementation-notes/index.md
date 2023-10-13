@@ -2,6 +2,12 @@
 
 ## Introduction
 
+We will assume the following -
+
+Number of Training Examples - $ne$
+Number of Features for each example - $nf$
+Number of Classes for classification - $nc$
+
 ## Loss Function
 
 For every example, $\mathbf{x_{i}}$, we define its loss as -
@@ -105,22 +111,54 @@ $$
 \nabla_{w_{j}} L_{i} = \mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0)\nabla_{w_{j}}(f_{j}) = \mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) x_{i}
 $$
 
-and for $\nabla_{w_{y_{i}}}$, we have
+and for $\nabla_{w_{y_{i}}} L_{i}$, we have
 
 $$
 \nabla_{w_{y_{i}}} L_{i} = \sum_{j \neq w_{y_{i}}}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{y_{i}}}(-f_{y_{i}}) = \sum_{j \neq w_{y_{i}}}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) (-x_{i}) = -\sum_{j \neq w_{y_{i}}}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0)x_{i}
 $$
 
-------------------
+Overall, the derivate of margin loss across all $w_{j}$ can be written as a vector. Please note that Loss is a scalar but when differentiated w.r.t to a vector, the derivative will be a vector.
+
 $$
-\frac{d}{dW}mLoss = \begin{pmatrix} \frac{d}{dw_{1}}mLoss & \frac{d}{dw_{2}}mLoss & ... & \frac{d}{dw_{ne}}mLoss \end{pmatrix} + \begin{pmatrix} \frac{d}{dw_{y_{1}}}mLoss & \frac{d}{dw_{y_{2}}}mLoss & ... & \frac{d}{dw_{y_{ne}}}mLoss \end{pmatrix}
-$$
-$$
-\frac{d}{dW} \sum_{j \neq y_{i}} max(0, f_{j} - f_{y_{i}} + \Delta) = \frac{d}{dw_{j}}\sum_{j \neq y_{i}}(max(0, f_{j} - f_{y_{i}} + \Delta)) + \frac{d}{dw_{y_{i}}}\sum_{j \neq y_{i}}(max(0, f_{j} - f_{y_{i}} + \Delta))
+\nabla_{w} L = \begin{pmatrix} \nabla_{w_{1}}L & \nabla_{w_{2}}L & ... & \nabla_{w_{nc}}L \end{pmatrix}
 $$
 
+This can be understood as the following -
+
+Every column in the above vector is a sum of two derivatives. Let us take the $j^{th}$ column. We will calculate $\nabla_{w_{j}}L$ by summing $\nabla_{w_{j}}L_{i}$ across all examples $x_{i}$. This will be the entry for the entire $j_{th}$ column.
+
+Now, we will also add the contribution due to $\nabla_{w_{y_{i}}}L_{i}$. For this, take every example, $x_{i}$ and ask what is $y_{i}$, i.e., we ask what class does it belong to? It will be one of the classes from ${1, 2, ..., nc}$. So, $y_{i}$ becomes a number from ${1, 2, ..., nc}$. Let us say, it is $k$. Then we now have $\nabla_{w_{k}}L_{i}$. We go ahead and add the contribution to the $k^{th}$ column.
+
+Once, we have done this, we have the derivative of the margin loss. Through some dimensional analysis, we see that derivative of regularization loss is of the same dimension as $\mathbf{W}$. Clearly, margin loss should also be of the same dimension. We can deduce that the derivative of the overall margin loss will also be the same as that, i.e., the dimension of $\mathbf{W}$.
 
 
 ## Implementation in NumPy (with loops)
 
+Assume the training examples are in $\mathbf{X}$ and this is of size `ne X nf`.
+
+Assume the training labels are in $y$ and this is of size `ne X 1`.
+
+Assume the trained model has weights in $\mathbf{W}$ and this is of size `nf X nc`. Technically this should be `(nf+1) X nc` but that is a detail we can skip here in this discussion.
+
 ## Vectorized Implementation in Numpy
+
+```
+W = np.random.randn(nf, nc)
+dW = np.zeros(nf, nc)
+
+regularization_loss = 2 * lambda * W
+
+y_preds = X @ W
+y_preds_true = y_preds[range(ne), y].reshape((ne, 1))
+margins = y_preds - y_preds_true + delta
+margins = np.maximum(0, margins)
+
+loss = margins.sum(axis=0) - delta
+dloss = np.zeros((ne, nc))
+dloss[margins > 0] = 1.0
+dloss[range(ne), y] -= dloss.sum(axis=1)
+dloss /= N
+
+dW = X.T @ dloss
+dW += reg_loss
+```
