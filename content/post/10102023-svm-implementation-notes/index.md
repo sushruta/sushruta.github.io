@@ -1,4 +1,16 @@
-
+---
+title: "Linear SVM Implementation Notes"
+description: Notes on deriving loss functions and gradients for SVM based image classification
+slug: svm-implementation-notes
+date: 2023-10-12T19:12:12-07:00
+image: svm-banner.png
+categories:
+  - cs231n
+  - machine learning
+tags:
+  - Machine Learning
+  - CS231n
+---
 
 ## Introduction
 
@@ -140,25 +152,68 @@ Assume the training labels are in $y$ and this is of size `ne X 1`.
 
 Assume the trained model has weights in $\mathbf{W}$ and this is of size `nf X nc`. Technically this should be `(nf+1) X nc` but that is a detail we can skip here in this discussion.
 
+```
+W = np.random.randn(nf, nc)
+dW = np.zeros(W.shape)
+loss = 0.0
+
+for i in range(ne):
+  y_preds = X[i].dot(W)
+  y_pred_correct_class = y_preds[y[i]]
+  for j in range(nc):
+    if j == y[i]:
+      continue
+    margin = y_preds[j] - y_preds_correct_class + delta
+    if margin > 0:
+      loss += margin
+      dW[:, j] += X[i]
+      dW[:, y[i]] -= X[i]
+
+loss /= ne
+loss += lambda * np.sum(W * W)
+
+dW /= ne
+dW += 2 * lambda * W
+```
+
+We are essentially creating each column at a time. For a column, we are checking if the margin is greater than zero and doing things based on that. We are asking if the column's id is the same as the id of the class, i.e., if the column we are modifying happens to be the class which that example belongs to. According to the equation, we should not be summing up the contibutions when $j = y_{i}$.
+
+We eventually also add the contribution of regularization loss.
+
 ## Vectorized Implementation in Numpy
 
 ```
 W = np.random.randn(nf, nc)
-dW = np.zeros(nf, nc)
+dW = np.zeros(W.shape)
 
-regularization_loss = 2 * lambda * W
+regularization_loss = lambda * np.sum(np.dot(W, W))
 
 y_preds = X @ W
-y_preds_true = y_preds[range(ne), y].reshape((ne, 1))
-margins = y_preds - y_preds_true + delta
+# reshape is needed to make this compatible for broadcast in the next step
+y_preds_correct_class = y_preds[:, y].reshape((ne, 1))
+
+margins = y_preds - y_preds_correct_class + delta
+# apply maximum function to gate at 0.0 or more
 margins = np.maximum(0, margins)
 
+# Refer to the above equations to understand why delta is being subtracted
 loss = margins.sum(axis=0) - delta
+
+# set everything as zero as initialization
 dloss = np.zeros((ne, nc))
+
+# using the "indicator" function, selectively set elements in the matrix as 1.0
 dloss[margins > 0] = 1.0
+
+# add the contribution of derivative w.r.t w_{i}. Refer to the equations above!
 dloss[range(ne), y] -= dloss.sum(axis=1)
-dloss /= N
+
+# Do not forget the normalization parts as we have ne examples
+dloss /= ne
+
+# Refer to the explanation above and common sense dimensional analysis
+# to frame the product such the dW is the same dimension as W
 
 dW = X.T @ dloss
-dW += reg_loss
+dW += 2.0 * lambda * W
 ```
