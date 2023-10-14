@@ -217,3 +217,25 @@ dloss /= ne
 dW = X.T @ dloss
 dW += 2.0 * lambda * W
 ```
+
+## Training The Model using SGD
+
+We use "Stochastic Gradient Descent" method to train the model. When we say we are training the model, we are infact solving an optimization problem to tweak and re-tweak $\mathbf{W}$ matrix such that the loss function is minimized.
+
+Ofcourse the method to solve it is to get the derivative and set it to zero and solve for it. That is easier said than done. Also, the addition of regularization makes this idea of getting an analytical solution tough. On the other hand, we can't throw away regularization for an analytical solution because regularization provides us with generalization. We use iterative methods to get the best $\mathbf{W}$.
+
+Ideally, for SGD, we would take one training example, feed it the above code above, get the gradient of W and move a small step in that direction. Walking towards the direction of maximum gradient will allow us to hit our minima faster. Now, we mentioned, take one example and do this. No one really does that! It's slow plus not the best idea from the point of view of a SIMD architecture that CPUs and GPUs expose. We rather take a batch of examples and optimize W is one go. We then take another batch and do the same. We do that until $\mathbf{W}$ doesn't change or changes in a miniscule fashion.
+
+### Code in NumPy
+
+```
+epsilon = 1e-4
+learning_rate = 1e-3
+
+W = np.random.randn(nf, nc)
+
+for epoch in epochs:
+  dW = compute_loss_and_get_gradient(W, X, y)
+
+  W -= learning_rate * dW  
+```
