@@ -75,7 +75,11 @@ Before we go further, let us simplify a few small details and glue it back in th
 We see that the $l_{i}$ is being summed for all $j \neq y_{i}$. When it is infact equal to $y_{i}$, they both cancel out each other leaving $\Delta$. More concretely -
 
 $$
-L_{i} = \sum_{j \neq y_{i}} max(0, f_{j} - f_{y_{i}} + \Delta) = \sum_{j} max(0, f_{j} - f_{y_{i}} + \Delta) - (f_{y_{i}} - f_{y_{i}} + \Delta) = \sum_{j} max(0, f_{j} - f_{y_{i}} + \Delta) - \Delta
+\begin{equation}\begin{aligned}
+L_{i} &= \sum_{j \neq y_{i}} max(0, f_{j} - f_{y_{i}} + \Delta) \\
+  &= \sum_{j} max(0, f_{j} - f_{y_{i}} + \Delta) - (f_{y_{i}} - f_{y_{i}} + \Delta) \\
+  &= \sum_{j} max(0, f_{j} - f_{y_{i}} + \Delta) - \Delta
+\end{aligned}\end{equation}
 $$
 
 To further show the derivation, we briefly expand out all of $L_{i}$. If we have $nc$ as number of classes, we the loss defined as -
@@ -93,40 +97,43 @@ $$
 Also, with the max in the picture, we should note that
 
 $$
-\nabla_{w}max(0, f_{j} - f_{y_{i}} + \Delta) = \begin{cases}
-\nabla_{w}(f_{j} - f_{y_{i}} + \Delta) & f_{j} - f_{y_{i}} + \Delta \ge 0 \\
-0 & f_{j} - f_{y_{i}} + \Delta \le 0
-\end{cases}
+\begin{equation}\begin{aligned}
+\nabla_{w}max(0, f_{j} - f_{y_{i}} + \Delta) &= \begin{cases}
+                                                  \nabla_{w}(f_{j} - f_{y_{i}} + \Delta) & f_{j} - f_{y_{i}} + \Delta \ge 0 \\
+                                                  0 & f_{j} - f_{y_{i}} + \Delta \le 0
+                                                \end{cases} \\
+                                             &= \mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0)
+\end{aligned}\end{equation}
 $$
 
 We can simplify the above by using an indicator variable -
 
 $$
-\nabla_{w} L_{i} = \nabla_{w}\sum_{j}max(0, f_{j} - f_{y_{i}} + \Delta)
-$$
-
-$$
-\nabla_{w} L_{i} = \sum_{j}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w}(f_{j} - f_{y_{i}} + \Delta)
-$$
-
-$$
-\nabla_{w} L_{i} = \sum_{j}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{j}}(f_{j} - f_{y_{i}} + \Delta) + \sum_{j}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{y_{i}}}(f_{j} - f_{y_{i}} + \Delta)
-$$
-
-$$
-\nabla_{w} L_{i} = \sum_{j}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{j}}f_{j} + \sum_{j}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{y_{i}}}(-f_{y_{i}})
+\begin{equation}\begin{aligned}
+\nabla_{w} L_{i} &= \nabla_{w}\sum_{j}max(0, f_{j} - f_{y_{i}} + \Delta) \\
+  &= \sum_{j}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w}(f_{j} - f_{y_{i}} + \Delta) \\
+  &= \sum_{j}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{j}}(f_{j} - f_{y_{i}} + \Delta) + \sum_{j}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{y_{i}}}(f_{j} - f_{y_{i}} + \Delta) \\
+  &= \sum_{j}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{j}}f_{j} + \sum_{j}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{y_{i}}}(-f_{y_{i}})
+\end{aligned}\end{equation}
 $$
 
 For $\nabla_{w_{j}} L_{i}$, we have -
 
 $$
-\nabla_{w_{j}} L_{i} = \mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0)\nabla_{w_{j}}(f_{j}) = \mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) x_{i}
+\begin{equation}\begin{aligned}
+\nabla_{w_{j}} L_{i} &= \mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0)\nabla_{w_{j}}(f_{j}) \\
+  &= \mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) x_{i}
+\end{aligned}\end{equation}
 $$
 
 and for $\nabla_{w_{y_{i}}} L_{i}$, we have
 
 $$
-\nabla_{w_{y_{i}}} L_{i} = \sum_{j \neq w_{y_{i}}}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{y_{i}}}(-f_{y_{i}}) = \sum_{j \neq w_{y_{i}}}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) (-x_{i}) = -\sum_{j \neq w_{y_{i}}}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0)x_{i}
+\begin{equation}\begin{aligned}
+\nabla_{w_{y_{i}}} L_{i} &= \sum_{j \neq w_{y_{i}}}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{y_{i}}}(-f_{y_{i}}) \\
+  &= \sum_{j \neq w_{y_{i}}}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) (-x_{i}) \\
+  &= -\sum_{j \neq w_{y_{i}}}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0)x_{i}
+\end{aligned}\end{equation}
 $$
 
 Overall, the derivate of margin loss across all $w_{j}$ can be written as a vector. Please note that Loss is a scalar but when differentiated w.r.t to a vector, the derivative will be a vector.
