@@ -239,3 +239,9 @@ for epoch in epochs:
 
   W -= learning_rate * dW  
 ```
+
+## Conclusion
+
+SVM is better than kNN model. It scales better. The model scales with number of features rather than the number of examples! Also, we explored the linear form of this model, i.e., the boundary separation is a linear function - a line in 2D or a plane in 3D or a hyperplane in n-D. We can use kernels to relax this and arrive at boundaries that are non-linear which allow us to express complex boundaries to discern between classes.
+
+Thanks for reading this article!
