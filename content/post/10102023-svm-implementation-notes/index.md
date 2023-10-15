@@ -251,4 +251,18 @@ for epoch in epochs:
 
 SVM is better than kNN model. It scales better. The model scales with number of features rather than the number of examples! Also, we explored the linear form of this model, i.e., the boundary separation is a linear function - a line in 2D or a plane in 3D or a hyperplane in n-D. We can use kernels to relax this and arrive at boundaries that are non-linear which allow us to express complex boundaries to discern between classes.
 
-Thanks for reading this article!
+As part of visualizing the weights, I realized that maybe there is a better choice of regularization and learning rate constants. I came to this conclusion because my weights images do not make any sense. They make sense in a way that the images seem to be mirrored along y-axis indicating that the classifier is orientation invariant. If the image were more clear, I would be able to make a few more inferences regarding the general useful-ness of this model.
+
+Right now, I get abot `34%` as my accuracy on the testing dataset.
+
+## Future Directions
+
+Some of the directions I would go about if given more times are --
+
+* explore better ways to get learning rates and regularization constants. I had a buunch of values and iterated through every combination of them. Maybe a better way would be would to get values that along the gradient rather than only taking the values that I defined. This will make the training quite long compared to my implemented technique but since training will only happen a few times (compared to inference, this is worth it).
+
+* Explore the use of non-linear models. There is a wealth of research on non-linear models based on guassian kernels and such and as an extension could look into these methods to improve the accuracy of the model.
+
+## Thanks!
+
+Thanks for reading this article! For feedback and/or fanmail, send me an email 💌
