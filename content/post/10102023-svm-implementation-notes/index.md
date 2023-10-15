@@ -76,8 +76,8 @@ We see that the $l_{i}$ is being summed for all $j \neq y_{i}$. When it is infac
 
 $$
 \begin{equation}\begin{aligned}
-L_{i} &= \sum_{j \neq y_{i}} max(0, f_{j} - f_{y_{i}} + \Delta) \\
-  &= \sum_{j} max(0, f_{j} - f_{y_{i}} + \Delta) - (f_{y_{i}} - f_{y_{i}} + \Delta) \\
+L_{i} &= \sum_{j \neq y_{i}} max(0, f_{j} - f_{y_{i}} + \Delta) \newline
+  &= \sum_{j} max(0, f_{j} - f_{y_{i}} + \Delta) - (f_{y_{i}} - f_{y_{i}} + \Delta) \newline
   &= \sum_{j} max(0, f_{j} - f_{y_{i}} + \Delta) - \Delta
 \end{aligned}\end{equation}
 $$
@@ -99,9 +99,9 @@ Also, with the max in the picture, we should note that
 $$
 \begin{equation}\begin{aligned}
 \nabla_{w}max(0, f_{j} - f_{y_{i}} + \Delta) &= \begin{cases}
-                                                  \nabla_{w}(f_{j} - f_{y_{i}} + \Delta) & f_{j} - f_{y_{i}} + \Delta \ge 0 \\
+                                                  \nabla_{w}(f_{j} - f_{y_{i}} + \Delta) & f_{j} - f_{y_{i}} + \Delta \ge 0 \newline
                                                   0 & f_{j} - f_{y_{i}} + \Delta \le 0
-                                                \end{cases} \\
+                                                \end{cases} \newline
                                              &= \mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0)
 \end{aligned}\end{equation}
 $$
@@ -110,9 +110,9 @@ We can simplify the above by using an indicator variable -
 
 $$
 \begin{equation}\begin{aligned}
-\nabla_{w} L_{i} &= \nabla_{w}\sum_{j}max(0, f_{j} - f_{y_{i}} + \Delta) \\
-  &= \sum_{j}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w}(f_{j} - f_{y_{i}} + \Delta) \\
-  &= \sum_{j}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{j}}(f_{j} - f_{y_{i}} + \Delta) + \sum_{j}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{y_{i}}}(f_{j} - f_{y_{i}} + \Delta) \\
+\nabla_{w} L_{i} &= \nabla_{w}\sum_{j}max(0, f_{j} - f_{y_{i}} + \Delta) \newline
+  &= \sum_{j}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w}(f_{j} - f_{y_{i}} + \Delta) \newline
+  &= \sum_{j}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{j}}(f_{j} - f_{y_{i}} + \Delta) + \sum_{j}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{y_{i}}}(f_{j} - f_{y_{i}} + \Delta) \newline
   &= \sum_{j}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{j}}f_{j} + \sum_{j}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{y_{i}}}(-f_{y_{i}})
 \end{aligned}\end{equation}
 $$
@@ -121,7 +121,7 @@ For $\nabla_{w_{j}} L_{i}$, we have -
 
 $$
 \begin{equation}\begin{aligned}
-\nabla_{w_{j}} L_{i} &= \mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0)\nabla_{w_{j}}(f_{j}) \\
+\nabla_{w_{j}} L_{i} &= \mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0)\nabla_{w_{j}}(f_{j}) \newline
   &= \mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) x_{i}
 \end{aligned}\end{equation}
 $$
@@ -130,8 +130,8 @@ and for $\nabla_{w_{y_{i}}} L_{i}$, we have
 
 $$
 \begin{equation}\begin{aligned}
-\nabla_{w_{y_{i}}} L_{i} &= \sum_{j \neq w_{y_{i}}}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{y_{i}}}(-f_{y_{i}}) \\
-  &= \sum_{j \neq w_{y_{i}}}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) (-x_{i}) \\
+\nabla_{w_{y_{i}}} L_{i} &= \sum_{j \neq w_{y_{i}}}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) \nabla_{w_{y_{i}}}(-f_{y_{i}}) \newline
+  &= \sum_{j \neq w_{y_{i}}}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0) (-x_{i}) \newline
   &= -\sum_{j \neq w_{y_{i}}}\mathbb{1}(max(0, f_{j} - f_{y_{i}} + \Delta) > 0)x_{i}
 \end{aligned}\end{equation}
 $$
