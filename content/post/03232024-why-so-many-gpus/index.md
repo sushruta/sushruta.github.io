@@ -24,7 +24,7 @@ The papers I am going to discuss did a systematic study on how the compute power
 
 Over years, people have realized that making the network larger and larger has yielded better performance. [Joel, Sharan, et. al. in Deep Learning Scaling is Predictably Emperical](https://arxiv.org/abs/1712.00409) show through a variety of experiments in Machine Translation, Language Modeling, Image Processing and Speech Recognition that small data doesn't reduce generalization errors. We need a lot of data to beat that. With a lot of data, we can move cross the bridge of reducing generalization error and enter the land of irredicible errors which are... kind of irreducible and might need something else to fix. As shown in the below pic, the dataset increase is on a log scale. I am not sure if the plot is to scale but if we assume it is to scale, the x-axis difference between the two boundaries is almost double the first band. This means we need 10^2 more data to overcome that band and meaningfully reduce generalization error.
 
-![image showing data size and error comes here. Make sure you highlight log scale for data set]()
+![image showing data size and error comes here. Make sure you highlight log scale for data set](training-data-size.png)
 
 **Conclusion:** We need a lot of data to train a good LLM. If we have a large amount of data, the time to train increases or we have to throw more GPUs to the problem.
 
