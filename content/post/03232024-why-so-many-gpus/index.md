@@ -30,11 +30,15 @@ Over years, people have realized that making the network larger and larger has y
 
 ## Model Size Needs to be Large to Decrease Loss
 
-In the paper Scaling Laws for [Autoregressive Generative Modeling, Tom, Jared, et. al.](https://arxiv.org/abs/2010.14701) show through various experiments that the error for the model reduces as the the number of parameters increase. They also show how the training time increases as these parameters increase. They show that their results are consistent in various domains like Images, Language, Speech, etc.
+In the paper [Scaling Laws for Autoregressive Generative Modeling, Tom, Jared, et. al.](https://arxiv.org/abs/2010.14701) show through various experiments that the error for the model reduces as the the number of parameters increase. They also show how the training time increases as these parameters increase. They show that their results are consistent in various domains like Images, Language, Speech, etc.
 
-![image showing relationship b/w loss and parameters size]()
+![image showing relationship b/w loss and parameters size](compute-time-all-modalities.png)
 
-Again, the x-axis here is log scale. It shows the time needed to train the model in form on Peta FLOPs per day. Essentially, it is an indication of volume. Let us say you have enough GPUs to ensure 1 PetaFLOP of processing for one day. The graph says that you need that infrastructure to continously run for `10^4` days to get a really good LLM model which has more than `10^11` parameters! Also, notice the increase in time from `10^2` days to `10^4` days as model size increases from `10^10` to `10^11` parameters. In simple words, if you increase the model size by 10x, the time to train it will increase from 100 days to 10000 days!
+Again, the x-axis here is log scale. It shows the time needed to train the model in form on Peta FLOPs per day. Essentially, it is an indication of volume. Let us say you have enough GPUs to ensure 1 PetaFLOP of processing for one day. Let us look at the language chart more carefully -
+
+![one of the charts from above showing more detail](compute-times-language.png)
+
+The graph says that you need that infrastructure to continously run for `10^4` days to get a really good LLM model which has more than `10^11` parameters! Also, notice the increase in time from `10^2` days to `10^4` days as model size increases from `10^10` to `10^11` parameters. In simple words, if you increase the model size by 10x, the time to train it will increase from 100 days to 10000 days!
 
 **Conclusion:** We need a lot of processing time for a lot of days. The only way to manage that is to have a lot of GPUs which can churn through all period and return a well rounded model.
 
