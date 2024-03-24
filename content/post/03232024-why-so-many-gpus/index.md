@@ -2,7 +2,7 @@
 title: "Why are so many GPUs"
 description: Why are so many GPUs needed to train deep learning models?
 slug: why-so-many-gpus
-date: 2024-03-24T15:53:22-07:00
+date: 2024-03-23T15:53:22-07:00
 categories:
   - machine learning
   - llm
