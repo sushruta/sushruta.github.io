@@ -46,6 +46,8 @@ The graph says that you need that infrastructure to continously run for `10^4` d
 
 In the paper [Language Models are Few Shot Learners - Brown, Mann, et. al.](https://arxiv.org/abs/2005.14165) show that as the number of parameters increase, the models ability to be a few shot learner becomes more and more attainable. In the image below, we see that accuracy jumps from under `10%` to more than `20%` as the parameter size becomes `10x` from `1.3B` to `13B` params. It jumps from 20% to over 60% as the model size increases by `15x`. So, overall, to move from under `10%` to over `60%`, we need a model that is `150x` larger!
 
+![image showing accuracy of few shot learning with parameter size](accuracy-few-shot-learners.png)
+
 **Conclusion:** We need a really large model to be able to do few shot learning. To basically see just a few examples and draw patterns out of it. This is what most people are impressed with ChatGPT and for that, it needs a lot of computation power. Why? Because very very large models need a lot of computation from the previous section.
 
 ## Conclusion
