@@ -1,0 +1,119 @@
+---
+title: "NVLink and GPU Interconnect"
+description: Looking into what is NVLink and getting multiple GPUs to communicate with each other.
+slug: nvlink-multiple-gpus
+date: 2024-03-30T16:17:13-07:00
+categories:
+  - nvlink
+  - gpu
+  - bandwidth
+tags:
+  - gpu
+  - bandwidth
+  - nvlink
+---
+
+Topics to cover --
+
+### Getting Multiple GPUs with an Interconnect
+
+0. To set the stage, let us talk about a system where multiple GPUs are connected to each other through fast interconnect. A few words on how to get that on AWS. Once we get it, do `nvidia-smi` to show that we infact have multiple GPUs running.
+
+### NVLink and What is it?
+
+A few lines on what is NVLink. A diagram would be great as well
+
+### Topology Information from nvidia-smi
+
+Now introduce topology part of `nvidia-smi` with `matrix` set as flag.
+
+```
+nvidia-smi topo --matrix
+```
+
+An example output is the following --
+
+```
+	GPU0	GPU1	GPU2	GPU3	CPU Affinity	NUMA Affinity	GPU NUMA ID
+GPU0	 X 	NV12	SYS	SYS	0-23	0		N/A
+GPU1	NV12	 X 	SYS	SYS	24-47	1		N/A
+GPU2	SYS	SYS	 X 	NV12	48-71	2		N/A
+GPU3	SYS	SYS	NV12	 X 	72-95	3		N/A
+
+Legend:
+
+  X    = Self
+  SYS  = Connection traversing PCIe as well as the SMP interconnect between NUMA nodes (e.g., QPI/UPI)
+  NODE = Connection traversing PCIe as well as the interconnect between PCIe Host Bridges within a NUMA node
+  PHB  = Connection traversing PCIe as well as a PCIe Host Bridge (typically the CPU)
+  PXB  = Connection traversing multiple PCIe bridges (without traversing the PCIe Host Bridge)
+  PIX  = Connection traversing at most a single PCIe bridge
+  NV#  = Connection traversing a bonded set of # NVLinks
+```
+
+Write a few lines describing what these things mean and what information we can glean.
+
+### Running the P2P Bandwidth Test
+
+Talk about the sample executable available in CUDA samples and run it and provide some information on what is the output telling us.
+
+The output we got was -
+
+```
+GPU 0: NVIDIA A100 80GB PCIe (UUID: GPU-01329dc2-5254-af10-da11-5976fb603e59)
+	 Link 0: 25 GB/s
+	 Link 1: 25 GB/s
+	 Link 2: 25 GB/s
+	 Link 3: 25 GB/s
+	 Link 4: 25 GB/s
+	 Link 5: 25 GB/s
+	 Link 6: 25 GB/s
+	 Link 7: 25 GB/s
+	 Link 8: 25 GB/s
+	 Link 9: 25 GB/s
+	 Link 10: 25 GB/s
+	 Link 11: 25 GB/s
+GPU 1: NVIDIA A100 80GB PCIe (UUID: GPU-2803c3d9-faac-8e7e-83cf-622c52f15f0e)
+	 Link 0: 25 GB/s
+	 Link 1: 25 GB/s
+	 Link 2: 25 GB/s
+	 Link 3: 25 GB/s
+	 Link 4: 25 GB/s
+	 Link 5: 25 GB/s
+	 Link 6: 25 GB/s
+	 Link 7: 25 GB/s
+	 Link 8: 25 GB/s
+	 Link 9: 25 GB/s
+	 Link 10: 25 GB/s
+	 Link 11: 25 GB/s
+GPU 2: NVIDIA A100 80GB PCIe (UUID: GPU-b1131190-8f85-e9a3-68c4-f70dd250e890)
+	 Link 0: 25 GB/s
+	 Link 1: 25 GB/s
+	 Link 2: 25 GB/s
+	 Link 3: 25 GB/s
+	 Link 4: 25 GB/s
+	 Link 5: 25 GB/s
+	 Link 6: 25 GB/s
+	 Link 7: 25 GB/s
+	 Link 8: 25 GB/s
+	 Link 9: 25 GB/s
+	 Link 10: 25 GB/s
+	 Link 11: 25 GB/s
+GPU 3: NVIDIA A100 80GB PCIe (UUID: GPU-c544a935-935a-6c57-b296-11f8f51a20ca)
+	 Link 0: 25 GB/s
+	 Link 1: 25 GB/s
+	 Link 2: 25 GB/s
+	 Link 3: 25 GB/s
+	 Link 4: 25 GB/s
+	 Link 5: 25 GB/s
+	 Link 6: 25 GB/s
+	 Link 7: 25 GB/s
+	 Link 8: 25 GB/s
+	 Link 9: 25 GB/s
+	 Link 10: 25 GB/s
+	 Link 11: 25 GB/s
+```
+
+### Conclusion
+
+Talk about the broad points. Maybe also throw in a line around orchestrators like SLURM - a workload orchestrator. They are more less similar to Kubernetes but more popular in the HPC world.
