@@ -17,15 +17,23 @@ Topics to cover --
 
 ### Getting Multiple GPUs with an Interconnect
 
-0. To set the stage, let us talk about a system where multiple GPUs are connected to each other through fast interconnect. A few words on how to get that on AWS. Once we get it, do `nvidia-smi` to show that we infact have multiple GPUs running.
+For the following experiments, I am using a host that has 4 A100 GPUs connected to it. In pairs they are connected through NVLink for a total of 2 NVLink connections. You can create a similar setup in AWS by provisioning the `p4d` class machines. They will provision 8 A100 GPUs and the results might vary from what you see here. But the analysis remains the same.
+
+As always, you might have to request quota in order to provision these GPUs and for that you'll have to submit a ticket. Also, A100 is expensive and please pay attention to the price per hour before provisioning them in order to avoid a sticker shock 😆
 
 ### NVLink and What is it?
 
-A few lines on what is NVLink. A diagram would be great as well
+Nvidia describes NVLink as the following on their website -
+
+```
+NVLink is a 1.8TB/s bidirectional, direct GPU-to-GPU interconnect that scales multi-GPU input and output (IO) within a server. The NVIDIA NVLink Switch chips connect multiple NVLinks to provide all-to-all GPU communication at full NVLink speed within a single rack and between racks. 
+```
+
+To unpack it, GPUs connected through NVLink get almost 1.8TB/s of bandwidth. It's a separate piece of hardware that connects two GPUs directly and bypasses the whole PCI express slot and host thereby avoiding any latency there. As yo will see the later sections, this allows two GPUs to talk to each other as if they are almost one GPU which is great from data transfer standpoint.
 
 ### Topology Information from nvidia-smi
 
-Now introduce topology part of `nvidia-smi` with `matrix` set as flag.
+We can get the topology information of our host by running `nvidia-smi` with `matrix` set as flag.
 
 ```
 nvidia-smi topo --matrix
@@ -51,7 +59,7 @@ Legend:
   NV#  = Connection traversing a bonded set of # NVLinks
 ```
 
-Write a few lines describing what these things mean and what information we can glean.
+Looking at the matrix, we see that `GPU0` and `GPU1` are connected to each other using NVLink. Similarly `GPU2` and `GPU3` are connected to each other using NVLink. If any non-NVLink-ed GPUs want to talk to each other, they will have to do so via PCI-e slot. I will do a future post talking more about this as I understand it better. Right now, it is suffient to understand that data transfer across two GPUs which are not connected through NVLink will be much slower. To see this we can go to the next section.
 
 ### Running the P2P Bandwidth Test
 
@@ -138,6 +146,14 @@ P2P=Enabled Latency (P2P Writes) Matrix (us)
 
 NOTE: The CUDA Samples are not meant for performance measurements. Results may vary when GPU Boost is enabled.
 ```
+
+This matrix shows us things much more clearly. When P2P is diabled, no NVLink is used and therefore every communication across GPUs will be through PCIexpress slot and it will be slow. The magic happens for the cases when P2P is enabled.
+
+We observe the following things -
+
+1. If two GPUs are connected using NVLink, their bandwidth is 10x as compared to communicating across GPUs not connected through NVLink. This becomes 20x. i.e., it doubles when we are checking bidirectional data transfer.
+2. The latency to transfer data from a GPU to itself about 2.62 us. The same amount of data will almost 19 us to transfer to another GPU that is not NVLink-ed. If we have NVLink, it drops to 2.75 us. Almost close to GPU transferring it to itself. This shows that NVLink is like almost bonding the two GPUs in terms of data bandwidth.
+3. Lastly, we see CPU jump up when talking about transfers across GPUs that are not NVLink-ed. This is expected considering that data is being transferred through PCIe slot and the CPU will have to step in to do some synchronization and housekeeping.
 
 ### Conclusion
 
