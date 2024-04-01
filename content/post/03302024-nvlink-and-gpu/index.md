@@ -13,8 +13,6 @@ tags:
   - nvlink
 ---
 
-Topics to cover --
-
 ### Getting Multiple GPUs with an Interconnect
 
 For the following experiments, I am using a host that has 4 A100 GPUs connected to it. In pairs they are connected through NVLink for a total of 2 NVLink connections. You can create a similar setup in AWS by provisioning the `p4d` class machines. They will provision 8 A100 GPUs and the results might vary from what you see here. But the analysis remains the same.
